@@ -4,7 +4,7 @@ REM  for RDA5807M FM Radio Tuner
 REM  on MachiKania type P/PU
 REM ===================================
 
-USEVAR REG,HI,LO,VOL
+USEVAR REG,HI,LO,VOL,STC
 
 REM I2C 7bit slave addresses
 A = $10
@@ -26,8 +26,6 @@ R(5) = 0
 
 REM Volume (0-15)
 V = 1
-
-K = 0
 
 I2C 100
 
@@ -84,6 +82,7 @@ LABEL WRITEREG
   HI = GOSUB(GETHI,REG)
   LO = GOSUB(GETLO,REG)
   I2CWRITE B,2+REG,HI,LO
+  WAIT 1
   PRINT "[0";2+REG;"] ";HEX$(HI,2);HEX$(LO,2)
   RETURN 0
 
@@ -111,19 +110,32 @@ LABEL SETVOL
   RETURN VOL
 
 REM --------------------------------
+
 REM seek up
 LABEL SEEKUP
+  VAR I,F,STC
+  DIM G(2)
   R(0) = R(0) OR $00000300
   GOSUB(WRITEREG,0)
-  PRINT
+  PRINT "Seek"
+  DO
+    I2CREADDATA A,G,6
+    WAIT 1
+    STC = PEEK(G) AND $40
+  LOOP UNTIL (STC != 0)
+
+REM  PRINT HEX$(PEEK(G  ),2); 
+REM  PRINT HEX$(PEEK(G+1),2)
+  F = (PEEK(G) AND $03) << 8
+  F = F + PEEK(G+1) + 760
+  PRINT F/10;".";F%10;" MHz"
   RETURN 0
 
 REM --------------------------------
 REM RDA init
 LABEL RDAINIT
   R(0) = R(0) OR $00000002
-  GOSUB(WRITEALL)
   R(0) = R(0) AND $FFFFFFFD
-  GOSUB(WRITEREG,0)
+  GOSUB(WRITEALL)
   PRINT
   RETURN 0
