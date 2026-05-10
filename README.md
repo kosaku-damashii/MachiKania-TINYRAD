@@ -1,5 +1,6 @@
 # MachiKania-TINYRAD
-<img width="1926" height="1524" alt="image" src="https://github.com/user-attachments/assets/96b05c61-442f-429d-8007-1b1b49b90dad" />
+<img width="3648" height="2736" alt="DSC02559" src="https://github.com/user-attachments/assets/338995ee-c0d9-41e9-9171-38a2aaa67707" />
+
 FMラジオモジュールRRD-102V2.0（RDA5807M搭載）を使ったFMラジオ。<BR>
 MachiKania type P/PU のGROVE(I2C)端子に繋げて使う。<BR>
 <BR>
