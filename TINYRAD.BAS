@@ -4,17 +4,18 @@ REM  for RDA5807M FM Radio Tuner
 REM  on MachiKania type P/PU
 REM ===================================
 
-USEVAR REG,HI,LO,VOL,STC
+USEVAR ADA,ADB,REG,HI,LO,VOL,STC,FREQ,RSSI,ST
+
 
 REM I2C 7bit slave addresses
-A = $10
-B = $11
+ADA = $10
+ADB = $11
 
-REM RDA registers 0x02..0x07 (32bit)
+REM RDA registers 02H-07H (32bit)
 DIM R(5)
 
 REM initialize register values
-REM BAND:76-108 MhZ
+REM BAND:76-108 MHz (world wide)
 REM SPACE:100 kHz
 R(0) = $0000D005
 R(1) = $00000008
@@ -27,11 +28,15 @@ R(5) = 0
 REM Volume (0-15)
 V = 1
 
+REM Clock (kHz)
 I2C 100
 
 CLS
-PRINT "TinyRadio"
-PRINT "START=Seek  UP/DOWN=Vol"
+COLOR 5
+PRINT "Tiny Radio"
+COLOR 6
+PRINT "[START]=Seek  [UP]/[DOWN]=Vol"
+COLOR 7
 
 GOSUB RDAINIT
 GOSUB(SETVOL,V)
@@ -81,22 +86,18 @@ LABEL WRITEREG
   REG = ARGS(1)
   HI = GOSUB(GETHI,REG)
   LO = GOSUB(GETLO,REG)
-  I2CWRITE B,2+REG,HI,LO
+  I2CWRITE ADB,2+REG,HI,LO
   WAIT 1
-  PRINT "[0";2+REG;"] ";HEX$(HI,2);HEX$(LO,2)
+  REM PRINT "[0";2+REG;"] ";HEX$(HI,2);HEX$(LO,2)
   RETURN 0
 
 REM --------------------------------
 REM write all registers 0x02-0x07
 LABEL WRITEALL
-  cls
-  GOSUB(WRITEREG,0)
-  GOSUB(WRITEREG,1)
-  GOSUB(WRITEREG,2)
-  GOSUB(WRITEREG,3)
-  GOSUB(WRITEREG,4)
-  GOSUB(WRITEREG,5)
-  PRINT
+  VAR I
+  FOR I=0 TO 5
+    GOSUB(WRITEREG,I)
+  NEXT
   RETURN 0
 
 REM --------------------------------
@@ -106,30 +107,48 @@ LABEL SETVOL
   VOL = ARGS(1)
   R(3) = (R(3) AND $FFFFFFF0) OR VOL
   GOSUB(WRITEREG,3)
-  PRINT
+  CURSOR 0,4
+  PRINT "Volume: ";VOL
   RETURN VOL
 
 REM --------------------------------
 
 REM seek up
 LABEL SEEKUP
-  VAR I,F,STC
-  DIM G(2)
+  VAR STC,FREQ,RSSI,ST
+  REM RDA registers 0AH-0FH (32bit)
+  DIM G((6/2)-1)
   R(0) = R(0) OR $00000300
   GOSUB(WRITEREG,0)
-  PRINT "Seek"
+  COLOR 2
+  CURSOR 0,3:PRINT "Seek               "
   DO
-    I2CREADDATA A,G,6
+    I2CREADDATA ADA,G,6*4
     WAIT 1
     STC = PEEK(G) AND $40
   LOOP UNTIL (STC != 0)
+  COLOR 7
 
-REM  PRINT HEX$(PEEK(G  ),2); 
-REM  PRINT HEX$(PEEK(G+1),2)
-  F = (PEEK(G) AND $03) << 8
-  F = F + PEEK(G+1) + 760
-  PRINT F/10;".";F%10;" MHz"
+  REM Print Frequency
+  FREQ = (PEEK(G) AND $03) << 8
+  FREQ = FREQ + PEEK(G+1) + 760
+  CURSOR 0,3:PRINT "Frequency: ";FREQ/10;".";FREQ%10;" MHz"
+
+  REM Print RSSI level
+  RSSI = (PEEK(G+2) AND $FE) >> 1
+  CURSOR 0,5:PRINT "Signal: ";RSSI;"  "
+
+  REM Print Stereo/Mono
+  ST = (PEEK(G) AND $04) >> 2
+  CURSOR 0,6
+  IF ST==0 THEN 
+    PRINT "Mono  "
+  ELSE
+    PRINT "Stereo"
+  ENDIF
+
   RETURN 0
+
 
 REM --------------------------------
 REM RDA init
@@ -137,5 +156,4 @@ LABEL RDAINIT
   R(0) = R(0) OR $00000002
   R(0) = R(0) AND $FFFFFFFD
   GOSUB(WRITEALL)
-  PRINT
   RETURN 0
