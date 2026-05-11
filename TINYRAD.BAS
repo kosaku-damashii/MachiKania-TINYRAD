@@ -108,7 +108,7 @@ LABEL SETVOL
   R(3) = (R(3) AND $FFFFFFF0) OR VOL
   GOSUB(WRITEREG,3)
   CURSOR 0,4
-  PRINT "Volume: ";VOL
+  PRINT "Volume: ";VOL;" "
   RETURN VOL
 
 REM --------------------------------
@@ -136,7 +136,7 @@ LABEL SEEKUP
 
   REM Print RSSI level
   RSSI = (PEEK(G+2) AND $FE) >> 1
-  CURSOR 0,5:PRINT "Signal: ";RSSI;"  "
+  CURSOR 0,5:PRINT "Signal: ";RSSI;" "
 
   REM Print Stereo/Mono
   ST = (PEEK(G) AND $04) >> 2
