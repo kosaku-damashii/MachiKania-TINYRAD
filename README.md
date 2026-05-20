@@ -18,6 +18,6 @@ MachiKania type P/PU本体の<BR>
 
 ## ユニバーサル基板を使って作る
 部品の選定や加工方法については下記の図を参照。<BR>
-イヤホンと、アンテナ用のジャックにはミニジャックの延長コードなどを繋げると良い。
+イヤホンとアンテナを繋げるが、アンテナ用のジャックにはミニジャックの延長コードなどを繋げると良い。
 <img width="1991" height="1143" alt="image" src="https://github.com/user-attachments/assets/0108cc2c-1d95-4464-8e57-ae80d0a0a59c" />
 
