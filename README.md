@@ -13,3 +13,8 @@ L-OUTとR-OUTがモジュールの説明書と違うと思うが、ICのデー�
 操作方法<BR>
 MachiKania type P/PU本体の上下キーで音量調整<BR>
 STARTキーで放送局をシーク<BR>
+<BR>
+ユニバーサル基板を使って作る<BR>
+部品の選定や加工方法については下記の図を参照。<BR>
+<img width="1991" height="1143" alt="image" src="https://github.com/user-attachments/assets/0108cc2c-1d95-4464-8e57-ae80d0a0a59c" />
+
