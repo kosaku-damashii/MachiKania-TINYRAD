@@ -22,3 +22,5 @@ MachiKania type P/PU本体の<BR>
 イヤホンとアンテナを繋げるが、アンテナ用のジャックにはミニジャックの延長コードなどを繋げると良い。<BR>
 <img width="1991" height="1143" alt="image" src="https://github.com/user-attachments/assets/0108cc2c-1d95-4464-8e57-ae80d0a0a59c" />
 
+## 既知のバグ
+放送局名の表示で、現状、英語表記のみにしており、ソースコード上日本語表示の方をREM文にして無効にしている。理由はシークを繰り返すとエクセプションでハングアップしてしまうため。<BR>
