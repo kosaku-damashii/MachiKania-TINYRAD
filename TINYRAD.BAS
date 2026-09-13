@@ -8,8 +8,6 @@ USECLASS CKNJ8
 
 USEVAR ADA,ADB,REG,HI,LO,VOL,STC,FREQ,RSSI,ST,NE,NJ
 
-K=NEW(CKNJ8,"UTF-8")
-
 REM I2C 7bit slave addresses
 ADA = $10
 ADB = $11
@@ -148,8 +146,10 @@ VAR STC,FREQ,RSSI,ST,F,NE,NJ
    NE$=READ$()
    NJ$=READ$()
    IF F==FREQ OR F==0 THEN
-    CURSOR 0,4:PRINT "Name:   ";NE$
-    REM CURSOR 0,4:PRINT "Name:   ";:K.PRT(NJ$)
+REM     CURSOR 0,4:PRINT "Name:   ";NE$
+    K=NEW(CKNJ8,"UTF-8")
+    CURSOR 0,4:PRINT "Name:   ";:K.PRT(NJ$)
+    DELETE K
     BREAK
    ENDIF
   LOOP WHILE F>0
