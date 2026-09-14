@@ -7,7 +7,7 @@ MachiKania type P/PU のGROVE(I2C)端子に繋げて使う。<BR>
 ## 配線図
 MachiKania type P開発基板上にI2Cのプルアップ抵抗が付いている前提。<BR>
 L-OUTとR-OUTがモジュールの説明書と違うと思うが、ICのデータシートを正とするならばこうなるはず（テスターで確認済）<BR>
-アンテナには長めのジャンパー線でも良いが長い方が受信感度が良い。<BR>
+アンテナには長めのジャンパー線でも良いが長い方が受信感度が良い。100均などでも売ってるミニジャックの延長コードがプラグも付いていて良い。<BR>
 <img width="1515" height="425" alt="image" src="https://github.com/user-attachments/assets/d74703ed-c11a-47fb-9d52-8367c3ef9441" />
 <BR>
 ## 操作方法
