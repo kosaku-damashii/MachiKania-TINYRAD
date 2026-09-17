@@ -36,7 +36,7 @@ CLS
 COLOR 5
 PRINT "Tiny Radio"
 COLOR 6
-PRINT "[START]=Seek  [UP]/[DOWN]=Vol"
+PRINT "[FIRE]=Quit [START]=Seek [";CHR$($1E);"]/[";CHR$($1F);"]=Vol"
 COLOR 7
 
 GOSUB RDAINIT
@@ -48,21 +48,20 @@ DO
   IF K==0 THEN
     WAIT 10
     CONTINUE
-  ENDIF
-  IF (K==16) THEN
+  ELSEIF K==16 THEN
     GOSUB SEEKUP
-  ENDIF
-  IF (K==1) THEN
-    IF V < 15 THEN
+  ELSEIF K==1 THEN
+    IF V<15 THEN
       V = V + 1
       V = GOSUB(SETVOL,V)
     ENDIF
-  ENDIF
-  IF (K==2) THEN
-    IF V > 0 THEN
+  ELSEIF K==2 THEN
+    IF V>0 THEN
       V = V - 1
       V = GOSUB(SETVOL,V)
     ENDIF
+  ELSEIF K==32 THEN
+    END
   ENDIF
   WAIT 10
 LOOP
@@ -109,7 +108,7 @@ LABEL SETVOL
   R(3) = (R(3) AND $FFFFFFF0) OR VOL
   GOSUB(WRITEREG,3)
   CURSOR 0,5
-  PRINT "Volume: ";VOL;" "
+  PRINT "Volume: ";VOL;"  "
   RETURN VOL
 
 REM --------------------------------
@@ -125,6 +124,8 @@ VAR STC,FREQ,RSSI,ST,F,NE,NJ
   COLOR 2
   CURSOR 0,3:PRINT "Seek               "
   CURSOR 0,4:PRINT "                                      "
+  CURSOR 0,6:PRINT "           "
+  CURSOR 0,7:PRINT "      "
 
   DO
     I2CREADDATA ADA,G,6*4
@@ -136,7 +137,7 @@ VAR STC,FREQ,RSSI,ST,F,NE,NJ
   REM Print Frequency
   FREQ = (PEEK(G) AND $03) << 8
   FREQ = FREQ + PEEK(G+1) + 760
-  CURSOR 0,3:PRINT "Frequency: ";FREQ/10;".";FREQ%10;" MHz"
+  CURSOR 0,3:PRINT "Frequency: ";FREQ/10;".";FREQ%10;" MHz "
 
   REM Print Station Name
   RESTORE STA
@@ -287,8 +288,8 @@ DATA 761,"FM Iwate","エフエム岩手",
      911,"Radio Kansai","ラジオ関西",
      914,"RSK Radio","RSKラジオ",
      914,"RKK Radio","RKKラジオ",
-     915,"HBC Radio","HBCラジオ"
-     916,"Bunka Hoso", "文化放送",
+     915,"HBC Radio","HBCラジオ",
+     916,"Bunka Hoso","文化放送",
      917,"RAB Radio","RAB青森放送",
      917,"RNB Radio","南海放送",
      919,"OBC Radio Osaka","OBCラジオ大阪",
@@ -312,9 +313,9 @@ DATA 761,"FM Iwate","エフエム岩手",
      939,"SBS Radio","SBSラジオ",
      940,"MRO Radio","MROラジオ",
      941,"CRT Radio","CRT栃木放送",
-     942,"WBS Radio","WBS和歌山放送ラジオ"
+     942,"WBS Radio","WBS和歌山放送ラジオ",
      946,"LuckyFM","LuckyFM茨城放送",
      946,"FBC Radio","FBCラジオ",
      946,"RCC Radio","RCCラジオ",
      949,"KBS Kyoto Radio","KBS京都ラジオ",
-     0,   "Unknown","不明"
+     0,  "Unknown","不明"
