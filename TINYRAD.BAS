@@ -36,7 +36,7 @@ CLS
 COLOR 5
 PRINT "Tiny Radio"
 COLOR 6
-PRINT "[FIRE]=Quit [START]=Seek [";CHR$($1E);"]/[";CHR$($1F);"]=Vol"
+PRINT "[FIRE]=Quit [";CHR$($1C);"]/[";CHR$($1D);"]=Seek [";CHR$($1E);"]/[";CHR$($1F);"]=Vol"
 COLOR 7
 
 GOSUB RDAINIT
@@ -48,8 +48,6 @@ DO
   IF K==0 THEN
     WAIT 10
     CONTINUE
-  ELSEIF K==16 THEN
-    GOSUB SEEKUP
   ELSEIF K==1 THEN
     IF V<15 THEN
       V = V + 1
@@ -60,6 +58,10 @@ DO
       V = V - 1
       V = GOSUB(SETVOL,V)
     ENDIF
+  ELSEIF K==4 THEN
+    GOSUB(SEEKDOWN)
+  ELSEIF K==8 THEN
+    GOSUB(SEEKUP)
   ELSEIF K==32 THEN
     END
   ENDIF
@@ -113,13 +115,22 @@ LABEL SETVOL
 
 REM --------------------------------
 
-REM seek up
+REM Seek up
 LABEL SEEKUP
-VAR STC,FREQ,RSSI,ST,F,NE,NJ
+ GOSUB(SEEK, (R(0) OR $00000100) OR $00000200) 
+ RETURN
 
+REM Seek down
+LABEL SEEKDOWN
+ GOSUB(SEEK, (R(0) OR $00000100) AND $FFFFFDFF)
+ RETURN
+
+LABEL SEEK
+  VAR STC,FREQ,RSSI,ST,F,NE,NJ,D
+  D = ARGS(1)
   REM RDA registers 0AH-0FH (32bit)
   DIM G((6/2)-1)
-  R(0) = R(0) OR $00000300
+  R(0) = D
   GOSUB(WRITEREG,0)
   COLOR 2
   CURSOR 0,3:PRINT "Seek               "
@@ -127,10 +138,10 @@ VAR STC,FREQ,RSSI,ST,F,NE,NJ
   CURSOR 0,6:PRINT "           "
   CURSOR 0,7:PRINT "      "
 
-  DO
-    I2CREADDATA ADA,G,6*4
-    WAIT 1
-    STC = PEEK(G) AND $40
+ DO
+  I2CREADDATA ADA,G,6*4
+  WAIT 1
+  STC = PEEK(G) AND $40
   LOOP UNTIL (STC != 0)
   COLOR 7
 
@@ -167,8 +178,7 @@ REM     CURSOR 0,4:PRINT "Name:   ";NE$
   ELSE
     PRINT "Stereo"
   ENDIF
-
-  RETURN 0
+  RETURN
 
 
 REM --------------------------------
